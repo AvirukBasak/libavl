@@ -162,7 +162,7 @@ int num_comp(avldata_t *d1, avldata_t *d2) {
     return d1->num - d2->num;
 }
 int num_kcomp(void *key, avldata_t *d) {
-    return *key - d->num;
+    return *(int *) key - d->num;
 }
 in main()
 {
