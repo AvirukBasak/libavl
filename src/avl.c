@@ -13,7 +13,7 @@ struct AVL {
  * @param head AVL head
  * @param node Node to be attached
  * @param callback int (*)(avlnode_t*, avlnode_t*)
- * @return true on attach success
+ * @return bool true on attach success
  */
 bool avl_attach(AVL *head, avlnode_t *node, avl_compare_t callback)
 {
