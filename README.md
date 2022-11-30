@@ -15,12 +15,16 @@ Therefore things like memory management, node allocation and freeing are to be d
 User defined struct types:
 - [`avlnode_t`](#avlnode_t)
 
-Library provides the following functions:
+Functions:
 - [`avl_attach`](#avl_attach)
 - [`avl_detach`](#avl_detach)
 - [`avl_search`](#avl_search)
 
-Library requires following callback function pointers:
+Callback function types:
+- [`avl_compare_t`](#avl_compare)
+- [`avl_keycompare_t`](#avl_keycompare)
+
+Callback functions:
 - [`avl_compare`](#avl_compare)
 - [`avl_keycompare`](#avl_keycompare)
 
@@ -42,7 +46,7 @@ The members starting with `__` are used by `libavl` to manage the tree.
 
 #### avl_attach
 ```c
-bool avl_attach(AVL *head, avlnode_t *node, avl_compare);
+bool avl_attach(AVL *head, avlnode_t *node, avl_compare_t callback);
 ```
 
 - param: AVL head
@@ -54,7 +58,7 @@ Calls [`avl_compare`](#avl_compare) callback function to compare two nodes.
 
 #### avl_detach
 ```c
-bool avl_detach(AVL *head, avlnode_t *node, avl_compare);
+bool avl_detach(AVL *head, avlnode_t *node, avl_compare_t callback);
 ```
 
 - param: AVL head
@@ -68,7 +72,7 @@ Detach doesn't free a node by itself, so you'll need to do the memory cleanup.
 
 #### avl_search
 ```c
-avlnode_t *avl_search(AVL *head, void *key, avl_keycompare);
+avlnode_t *avl_search(AVL *head, void *key, avl_keycompare_t callback);
 ```
 
 - param: AVL head
