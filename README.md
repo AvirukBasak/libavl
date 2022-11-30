@@ -6,14 +6,27 @@ Instead it only takes the job of attaching, detaching and searching nodes.
 
 Therefore things like memory management, node allocation and freeing are to be done manually.
 
+#### Why libavl is minimalistic?
+The library attempts to not depend on `libc`.
+Therefore it provides the AVL tree algorithm only.
+To make things function, one must manually handle the data to be stored in the tree.
+
+This makes it general purpose.
+
+You'll most likely need a few wrapper libraries around `libavl` to get the functionality you want.
+
 ## Usage
 - Build with `make`.
 - Copy library from `target/`.
 - See [api](#api) and [example](#code-example) below.
 
 ## API
-User defined struct types:
+Library defined types:
+- [`AVL`](#avl-type)
 - [`avlnode_t`](#avlnode_t)
+
+User defined struct types:
+- [`avldata_t`](#avldata_t)
 
 Functions:
 - [`avl_attach`](#avl_attach)
@@ -21,28 +34,35 @@ Functions:
 - [`avl_search`](#avl_search)
 
 Callback function types:
-- [`avl_compare_t`](#avl_compare)
-- [`avl_keycompare_t`](#avl_keycompare)
+- [`avl_compare_t`](#avl_compare_t)
+- [`avl_keycompare_t`](#avl_keycompare_t)
 
-Callback functions:
-- [`avl_compare`](#avl_compare)
-- [`avl_keycompare`](#avl_keycompare)
+#### AVL type
+The data type for the head node of AVL tree.
+
+The head needs to be manually allocated.
+Initialization can be handled by `libavl`.
 
 #### avlnode_t
-A user defined struct that is the data type for nodes in `libavl` AVL tree.
+A library defined struct type.
+It's the data type for nodes in the AVL tree.
 
-Your `avlnode_t` struct defination should look something like below:
-```C
-struct avlnode_t {
-    avlnode_t *__pr;     // parent
-    avlnode_t *__lc;     // left child
-    avlnode_t *__rc;     // right child
-    int        __bf;     // balance factor
-    // your data
-};
+The `data` member of this type should point to the data that you want to put in the AVL tree.
+See [example](#code-example).
+
+A node needs to be manually allocated.
+Initialization can be handled by `libavl`.
+
+#### avldata_t
+A user defined struct type that contains the data to be put in an AVL tree node.
+
+Make sure you define `struct avldata_t`.
+As an example of an AVL tree that stores only integers, we will have the following.
+```c
+struct avldata_t {
+    int num;
+}
 ```
-
-The members starting with `__` are used by `libavl` to manage the tree.
 
 #### avl_attach
 ```c
@@ -52,10 +72,10 @@ Attaches a node to the tree and rotates tree around if needed.
 
 - param: AVL head
 - param: node to be attached
-- param: [`int (*)(avlnode_t*, avlnode_t*)`](#avl_compare)
+- param: [`avl_compare_t`](#avl_compare_t) callback function
 - return: true on attach success
 
-Calls [`avl_compare`](#avl_compare) callback function to compare two nodes.
+Calls [`avl_compare_t`](#avl_compare_t) type callback function to compare `avldata_t` b/w two nodes.
 
 #### avl_detach
 ```c
@@ -66,64 +86,63 @@ Detaches a node from the tree and rotates tree around if needed.
 
 - param: AVL head
 - param: node to be detached
-- param: [`int (*)(avlnode_t*, avlnode_t*)`](#avl_compare)
+- param: [`avl_compare_t`](#avl_compare_t) callback function
 - return: true on detach success
 
-Calls [`avl_compare`](#avl_compare) callback function to compare two nodes.
+Calls [`avl_compare_t`](#avl_compare_t) type callback function to compare `avldata_t` b/w two nodes.
 
 Detach doesn't free a node by itself, so you'll need to do the memory cleanup.
 
 #### avl_search
 ```c
-avlnode_t *avl_search(AVL *head, void *key, avl_keycompare_t callback);
+avldata_t *avl_search(AVL *head, void *key, avl_keycompare_t callback);
 ```
 
 Searches for a key among the tree nodes.
 
 - param: AVL head
-- param: key
-- param [`int (*)(void*, avlnode_t*)`](#avl_keycompare)
-- return: pointer to node containing `key`
+- param: pointer to the key to be searched
+- param [`avl_keycompare_t`](#avl_keycompare_t) callback function
+- return: pointer to data containing `key`
 
-The `key` is the value of a member of the `avlnode_t` struct.
-Search returns the node that contains that specific `key`.
+Calls [`avl_keycompare_t`](#avl_keycompare_t) type callback function to compare the `key` and `avldata_t` b/w two nodes.
 
-Calls [`avl_keycompare`](#avl_keycompare) callback function to compare the `key` and different `avlnode_t` nodes.
+The `key` is pointer to a member of the `avldata_t` struct.
 
-#### avl_compare
+Search returns pointer to the data which contains that specific `key`.
+
+#### avl_compare_t
 ```c
-int avl_compare(avlnode_t *node1, avlnode_t *node2);
+int (*)(avldata_t *d1, avldata_t *d2);
 ```
 
-The `avl_compare` function is a user defined function w/ prototype `int (avlnode_t*, avlnode_t*)`.
+A `avl_compare_t` type function is a user defined function w/ prototype `int (avldata_t*, avldata_t*)`.
 
-- param: AVL tree node
-- param: AVL tree node
+- param: AVL tree node data
+- param: AVL tree node data
 - return: int
 
-The function is meant to take two `avlnode_t*` and compare them by their member's values.
+The function is meant to take `avldata_t*` from two nodes and compare them by their member's values.
 
 - If equal return 0
 - otherwise return +ve or -ve
-
-If `avl_compare` is `NULL`, library calls `abort`.
 
 If returned value is +ve, `libavl` moves to left subtree.
 
 If returned value is -ve, `libavl` moves to right subtree.
 
-#### avl_keycompare
+#### avl_keycompare_t
 ```c
-int avl_keycompare(void *key, avlnode_t *node);
+int (*)(void *key, avldata_t *d);
 ```
 
-The `avl_keycompare` function is a user defined function w/ prototype `int (void*, avlnode_t*)`.
+A `avl_keycompare_t` type function is a user defined function w/ prototype `int (void*, avldata_t*)`.
 
-- param: key passed to `alv_search`
-- param: AVL tree node
+- param: pointer of key passed to `alv_search`
+- param: AVL tree node data
 - return int
 
-The function is meant to take a member of `avlnode_t` as `key` and a `avlnode_t*` and compare them.
+The function is meant to take pointer to a member of an `avldata_t` as `key` and a `avldata_t*` and compare them.
 
 - If equal return 0
 - otherwise return +ve or -ve
@@ -136,24 +155,29 @@ If returned value is -ve, `libavl` moves to right subtree.
 This is an example showing how to initialize a new tree instance.
 
 ```c
-struct avlnode_t {
-    avlnode_t *__pr;
-    avlnode_t *__lc;
-    avlnode_t *__rc;
-    int        __bf;
-    int data;        // example data
+struct avldata_t {
+    int num;        // example data
 };
-int avl_compare(avlnode_t *n1, avlnode_t *n2) {
-    return (int) n2->data - (int) n1->data;
+int num_comp(avldata_t *d1, avldata_t *d2) {
+    return d1->num - d2->num;
+}
+int num_kcomp(void *key, avldata_t *d) {
+    return *key - d->num;
 }
 in main()
 {
     AVL *avl_head = malloc(sizeof(AVL));
     avlnode_t *node1 = malloc(sizeof(avlnode_t));
     avlnode_t *node2 = malloc(sizeof(avlnode_t));
+    // create new data (stack allocated in this case)
+    avldata_t data1 = { 12 };
+    avldata_t data2 = { 23 };
     // initialize nodes
-    avl_attach(avl_head, node1, avl_compare);
-    avl_attach(avl_head, node2, avl_compare);
+    node1->data = &data1;
+    node2->data = &data2;
+    // attatch
+    avl_attach(avl_head, node1, num_comp);
+    avl_attach(avl_head, node2, num_comp);
     // use tree
     free(node1);
     free(node2);

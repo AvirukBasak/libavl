@@ -17,14 +17,20 @@ typedef struct AVL AVL;
 typedef struct avlnode_t avlnode_t;
 
 /**
- * @brief Callback function pointer
+ * @brief AVL tree node data
+ * Needs to be manually allocated and linked with a node
  */
-typedef int (*avl_keycompare_t)(void*, avlnode_t*);
+typedef struct avldata_t avldata_t;
 
 /**
  * @brief Callback function pointer
  */
-typedef int (*avl_compare_t)(avlnode_t*, avlnode_t*);
+typedef int (*avl_keycompare_t)(void*, avldata_t*);
+
+/**
+ * @brief Callback function pointer
+ */
+typedef int (*avl_compare_t)(avldata_t*, avldata_t*);
 
 /**
  * @brief Attaches a node to the tree and rotates tree around if needed
@@ -49,8 +55,8 @@ bool avl_detach(AVL *head, avlnode_t *node, avl_compare_t callback);
  * @param head AVL head
  * @param key Key to be searched
  * @param callback int (*)(void*, avlnode_t*)
- * @return avlnode_t* pointer to node containing key
+ * @return avlnode_t* pointer to data containing key
  */
-avlnode_t *avl_search(AVL *head, void *key, avl_keycompare_t callback);
+avldata_t *avl_search(AVL *head, void *key, avl_keycompare_t callback);
 
 #endif
