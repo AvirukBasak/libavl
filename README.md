@@ -52,7 +52,7 @@ Attaches a node to the tree and rotates tree around if needed.
 
 - param: AVL head
 - param: node to be attached
-- param: [`int (*avl_compare)(avlnode_t*, avlnode_t*)`](#avl_compare)
+- param: [`int (*)(avlnode_t*, avlnode_t*)`](#avl_compare)
 - return: true on attach success
 
 Calls [`avl_compare`](#avl_compare) callback function to compare two nodes.
@@ -66,7 +66,7 @@ Detaches a node from the tree and rotates tree around if needed.
 
 - param: AVL head
 - param: node to be detached
-- param: [`int (*avl_compare)(avlnode_t*, avlnode_t*)`](#avl_compare)
+- param: [`int (*)(avlnode_t*, avlnode_t*)`](#avl_compare)
 - return: true on detach success
 
 Calls [`avl_compare`](#avl_compare) callback function to compare two nodes.
@@ -82,7 +82,7 @@ Searches for a key among the tree nodes.
 
 - param: AVL head
 - param: key
-- param [`int (*avl_keycompare)(void*, avlnode_t*)`](#avl_keycompare)
+- param [`int (*)(void*, avlnode_t*)`](#avl_keycompare)
 - return: pointer to node containing `key`
 
 The `key` is the value of a member of the `avlnode_t` struct.

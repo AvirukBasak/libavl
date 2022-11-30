@@ -1,5 +1,5 @@
-#ifndef __LIBAVL_H__
-#define __LIBAVL_H__
+#ifndef __AVL_H__
+#define __AVL_H__
 
 #include <stddef.h>
 #include <stdbool.h>
