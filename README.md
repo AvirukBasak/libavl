@@ -48,6 +48,7 @@ The members starting with `__` are used by `libavl` to manage the tree.
 ```c
 bool avl_attach(AVL *head, avlnode_t *node, avl_compare_t callback);
 ```
+Attaches a node to the tree and rotates tree around if needed.
 
 - param: AVL head
 - param: node to be attached
@@ -60,6 +61,8 @@ Calls [`avl_compare`](#avl_compare) callback function to compare two nodes.
 ```c
 bool avl_detach(AVL *head, avlnode_t *node, avl_compare_t callback);
 ```
+
+Detaches a node from the tree and rotates tree around if needed.
 
 - param: AVL head
 - param: node to be detached
@@ -74,6 +77,8 @@ Detach doesn't free a node by itself, so you'll need to do the memory cleanup.
 ```c
 avlnode_t *avl_search(AVL *head, void *key, avl_keycompare_t callback);
 ```
+
+Searches for a key among the tree nodes.
 
 - param: AVL head
 - param: key
