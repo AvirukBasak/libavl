@@ -27,7 +27,7 @@ typedef struct avldata_t avldata_t;
  * Needs to be manually allocated on the heap.
  */
 struct AVL {
-    avlnode_t *root;
+    avlnode_t *__root;
 };
 
 /**
@@ -36,10 +36,10 @@ struct AVL {
  */
 struct avlnode_t {
     avldata_t *data;  // data
-    avlnode_t *pr;    // parent
-    avlnode_t *lc;    // left child
-    avlnode_t *rc;    // right child
-    size_t    bf;     // balance factor
+    avlnode_t *__pr;  // parent
+    avlnode_t *__lc;  // left child
+    avlnode_t *__rc;  // right child
+    size_t    __bf;   // balance factor
 };
 
 /**
