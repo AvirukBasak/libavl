@@ -23,7 +23,7 @@ typedef int (*avl_compare_t)(avldata_t*, avldata_t*);
 typedef int (*avl_keycompare_t)(void*, avldata_t*);
 
 // helper functions
-void __avl_calcbf(AVL *head);
+void __avl_calcbf(AVL *head, avlnode_t *node);
 void __avl_balance(AVL *head, avlnode_t *node);
 void __avl_ll_rot(AVL *head, avlnode_t *node);
 void __avl_lr_rot(AVL *head, avlnode_t *node);
