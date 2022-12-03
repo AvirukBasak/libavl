@@ -39,7 +39,7 @@ struct avlnode_t {
     avlnode_t *__pr;  // parent
     avlnode_t *__lc;  // left child
     avlnode_t *__rc;  // right child
-    size_t    __bf;   // balance factor
+    size_t     __bf;  // balance factor
 };
 
 /**

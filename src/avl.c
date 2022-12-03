@@ -1,4 +1,5 @@
-#include "libavl.h"
+#include "stdhead.h"
+#include "avl.h"
 
 /**
  * @brief Attaches a node to the tree
@@ -9,12 +10,14 @@
  */
 bool avl_attach(AVL *head, avlnode_t *node, avl_compare_t callback)
 {
-    if (!head->__root) {
-        head->__root = node;
-        node->__pr = NULL;
+    if (!callback) abort();
+    if (!head || !node) return NULL;
+    if (!head->root) {
+        head->root = node;
+        node->pr = NULL;
         goto avl_attach_node_init;
     }
-    avlnode_t *p = head->__root;
+    avlnode_t *p = head->root;
     avlnode_t *trail = NULL;
     while (p) {
         /* if key < data, -ve or decrease data, i.e. go to left subtree
@@ -23,21 +26,21 @@ bool avl_attach(AVL *head, avlnode_t *node, avl_compare_t callback)
          */
         if (callback(node->data, p->data) < 0) {
             trail = p;
-            p = p->__lc;
+            p = p->lc;
         } else if (callback(node->data, p->data) > 0) {
             trail = p;
-            p = p->__rc;
+            p = p->rc;
         } else return false;
     }
     if (callback(node->data, trail->data) < 0)
-        trail->__lc = node;
+        trail->lc = node;
     else
-        trail->__rc = node;
-    node->__pr = trail;
+        trail->rc = node;
+    node->pr = trail;
 avl_attach_node_init:
-    node->__lc = NULL;
-    node->__rc = NULL;
-    node->__bf = 0;
+    node->lc = NULL;
+    node->rc = NULL;
+    node->bf = 0;
     return true;
 }
 
@@ -50,6 +53,47 @@ avl_attach_node_init:
  */
 avlnode_t *avl_detach(AVL *head, void *key, avl_keycompare_t callback)
 {
+    if (!callback) abort();
+    if (!head || !head->root || !key) return NULL;
+    // if at root
+    avlnode_t *root = head->root;
+    if (callback(key, root->data) == 0
+        && !root->lc
+        && !root->rc) return root;
+    // find key
+    avlnode_t *p = root;
+    while (p)
+        /* if key < data, -ve or decrease data, i.e. go to left subtree
+         * if key > data, +ve or increase data, i.e. go to right subtree
+         * if equal 0, match found
+         */
+        if (callback(key, p->data) < 0) p = p->lc;
+        else if (callback(key, p->data) > 0) p = p->rc;
+        else break;
+    if (!p) return NULL;
+    if (p->rc) {
+        avlnode_t *tmp = p->rc;
+        while (tmp->lc)
+            tmp = tmp->lc;
+        p->data = tmp->data;
+        if (tmp->pr == p) tmp->pr->rc = tmp->rc;
+        else tmp->pr->lc = tmp->rc;
+        return tmp;
+    } else if (p->pr) {
+        avlnode_t *tmp;
+        if (p->pr->lc == p) {
+            tmp = p->pr->lc;
+            p->pr->lc = p->lc;
+        } else {
+            tmp = p->pr->rc;
+            p->pr->rc = p->lc;
+        }
+        return tmp;
+    } else {
+        avlnode_t *tmp = p;
+        p = p->lc;
+        return tmp;
+    }
     return NULL;
 }
 
@@ -62,14 +106,16 @@ avlnode_t *avl_detach(AVL *head, void *key, avl_keycompare_t callback)
  */
 avldata_t *avl_search(AVL *head, void *key, avl_keycompare_t callback)
 {
-    avlnode_t *p = head->__root;
+    if (!callback) abort();
+    if (!head || !head->root || !key) return NULL;
+    avlnode_t *p = head->root;
     while (p)
         /* if key < data, -ve or decrease data, i.e. go to left subtree
          * if key > data, +ve or increase data, i.e. go to right subtree
          * if equal 0, match found
          */
-        if (callback(key, p->data) < 0) p = p->__lc;
-        else if (callback(key, p->data) > 0) p = p->__rc;
+        if (callback(key, p->data) < 0) p = p->lc;
+        else if (callback(key, p->data) > 0) p = p->rc;
         else return p->data;
     return NULL;
 }
