@@ -37,7 +37,6 @@ bool avl_attach(AVL *head, avlnode_t *node, avl_compare_t callback)
     else
         trail->rc = node;
     node->pr = trail;
-    __avl_calcbf(head, node->pr);
     __avl_balance(head, node->pr);
 avl_attach_node_init:
     node->lc = NULL;
@@ -59,9 +58,10 @@ avlnode_t *avl_detach(AVL *head, void *key, avl_keycompare_t callback)
     if (!head || !head->root || !key) return NULL;
     // if at root
     avlnode_t *root = head->root;
-    if (callback(key, root->data) == 0
-        && !root->lc
-        && !root->rc) return root;
+    if (!callback(key, root->data) && !root->lc && !root->rc) {
+        head->root = NULL;
+        return root;
+    }
     // find key
     avlnode_t *p = root;
     while (p)
@@ -78,8 +78,11 @@ avlnode_t *avl_detach(AVL *head, void *key, avl_keycompare_t callback)
         while (tmp->lc)
             tmp = tmp->lc;
         p->data = tmp->data;
-        if (tmp->pr == p) tmp->pr->rc = tmp->rc;
+        if (tmp->pr == p) p->rc = tmp->rc;
         else tmp->pr->lc = tmp->rc;
+        tmp->lc = tmp->rc = NULL;
+        __avl_balance(head, tmp->pr);
+        tmp->pr = NULL;
         return tmp;
     } else if (p->pr) {
         avlnode_t *tmp;
@@ -90,10 +93,14 @@ avlnode_t *avl_detach(AVL *head, void *key, avl_keycompare_t callback)
             tmp = p->pr->rc;
             p->pr->rc = p->lc;
         }
+        tmp->lc = NULL;
+        __avl_balance(head, tmp->pr);
+        tmp->pr = NULL;
         return tmp;
     } else {
         avlnode_t *tmp = p;
-        p = p->lc;
+        head->root = p->lc;
+        tmp->lc = NULL;
         return tmp;
     }
     return NULL;

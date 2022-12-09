@@ -65,9 +65,9 @@ struct avlnode_t {
     /**
      * @brief Node balance factor.
      * Auto managed, DO NOT modify.
-     * @type size_t
+     * @type int
      */
-    size_t __bf;
+    int __bf;
 };
 
 /**

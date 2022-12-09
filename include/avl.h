@@ -16,7 +16,7 @@ struct avlnode_t {
     avlnode_t *pr;    // parent
     avlnode_t *lc;    // left child
     avlnode_t *rc;    // right child
-    size_t     bf;    // node balance factor
+    int        bf;    // node balance factor
 };
 
 typedef int (*avl_compare_t)(avldata_t*, avldata_t*);
