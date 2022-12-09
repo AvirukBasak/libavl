@@ -37,6 +37,8 @@ bool avl_attach(AVL *head, avlnode_t *node, avl_compare_t callback)
     else
         trail->rc = node;
     node->pr = trail;
+    __avl_calcbf(head, node->pr);
+    __avl_balance(head, node->pr);
 avl_attach_node_init:
     node->lc = NULL;
     node->rc = NULL;

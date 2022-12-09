@@ -16,14 +16,15 @@ struct avlnode_t {
     avlnode_t *pr;    // parent
     avlnode_t *lc;    // left child
     avlnode_t *rc;    // right child
-    size_t     bf;    // balance factor
+    size_t     bf;    // node balance factor
 };
 
 typedef int (*avl_compare_t)(avldata_t*, avldata_t*);
 typedef int (*avl_keycompare_t)(void*, avldata_t*);
 
 // helper functions
-void __avl_calcbf(AVL *head, avlnode_t *node);
+void __avl_calcbf(avlnode_t *node);
+int __avl_height(avlnode_t *node);
 void __avl_balance(AVL *head, avlnode_t *node);
 void __avl_ll_rot(AVL *head, avlnode_t *node);
 void __avl_lr_rot(AVL *head, avlnode_t *node);
