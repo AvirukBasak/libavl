@@ -15,6 +15,8 @@ This makes it general purpose.
 
 You'll most likely need a few wrapper libraries around `libavl` to get the functionality you want.
 
+See the [example](tests/test.c) which implements an ordered map using `libavl`.
+
 ## Usage
 - Build with `make`.
 - Copy library from `target/`.
@@ -29,7 +31,7 @@ Functions:
 - [`avl_attach`](#avl_attach)
 - [`avl_detach`](#avl_detach)
 - [`avl_search`](#avl_search)
-- [`avl_traverse`](#acl_traverse)
+- [`avl_traverse`](#avl_traverse)
 
 Callback function types:
 - [`avl_compare_t`](#avl_compare_t)
@@ -38,7 +40,7 @@ Callback function types:
 #### AVL type
 The data type for the head node of the AVL tree.
 
-The head needs to be manually allocated and freed. See [example](tests/test.c#L49).
+The head needs to be manually allocated and freed. See [example](tests/test.c#L53).
 Initialization can be handled by `libavl`.
 
 #### avlnode_t
@@ -46,7 +48,7 @@ A library defined struct type.
 It's the data type for nodes in the AVL tree.
 
 The `data` member (which is a `void*`) of this struct should point to the data that you want to put in the AVL tree.
-See [example](tests/test.c#L62).
+See [example](tests/test.c#L74).
 
 A node needs to be manually allocated and freed.
 Initialization can be handled by `libavl`.
