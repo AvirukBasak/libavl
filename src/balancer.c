@@ -26,18 +26,21 @@ void __avl_balance(AVL *head, avlnode_t *node)
     __avl_calcbf(node);
     while (node->pr && abs(node->bf) <= 1)
         node = node->pr;
-    // left left case
-    if (node->bf > 1 && node->lc->bf >= 0 && node->lc->lc)
-        __avl_ll_rot(head, node);
-    // left right case
-    else if (node->bf > 1 && node->lc->bf < 0 && node->lc->rc)
-        __avl_lr_rot(head, node);
-    // right right case
-    else if (node->bf < -1 && node->rc->bf <= 0 && node->rc->rc)
-        __avl_rr_rot(head, node);
-    // right left case
-    else if (node->bf < -1 && node->rc->bf > 0 && node->rc->lc)
-        __avl_rl_rot(head, node);
+    if (node->bf > 1 && node->lc) {
+        // left left case
+        if (node->lc->lc && node->lc->bf >= 0)
+            __avl_ll_rot(head, node);
+        // left right case
+        else if (node->lc->rc && node->lc->bf < 0)
+            __avl_lr_rot(head, node);
+    } else if (node->bf < -1 && node->rc) {
+        // right right case
+        if (node->rc->rc && node->rc->bf <= 0)
+            __avl_rr_rot(head, node);
+        // right left case
+        else if (node->rc->lc && node->rc->bf > 0)
+            __avl_rl_rot(head, node);
+    }
 }
 
 void __avl_ll_rot(AVL *head, avlnode_t *node)
