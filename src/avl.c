@@ -72,9 +72,12 @@ avlnode_t *avl_detach(AVL *head, ptr_t key, avl_keycompare_t callback)
         if (callback(key, p->data) < 0) p = p->lc;
         else if (callback(key, p->data) > 0) p = p->rc;
         else break;
+    // key not found
     if (!p) return NULL;
+    // if p has rc, attempt going to inorder successor
     if (p->rc) {
         avlnode_t *tmp = p->rc;
+        // loop down to inorder successor
         while (tmp->lc)
             tmp = tmp->lc;
         // swap data b/w inord. successor and to-be-del node
@@ -84,26 +87,30 @@ avlnode_t *avl_detach(AVL *head, ptr_t key, avl_keycompare_t callback)
         // other pointer manup.
         if (tmp->pr == p) p->rc = tmp->rc;
         else tmp->pr->lc = tmp->rc;
+        // disconn. to-be-del node
         tmp->lc = tmp->rc = NULL;
         __avl_balance(head, tmp->pr);
         tmp->pr = NULL;
         return tmp;
     } else if (p->pr) {
-        avlnode_t *tmp;
-        if (p->pr->lc == p) {
-            tmp = p->pr->lc;
+        // if p has no inorder successor, remove it
+        avlnode_t *tmp = p;
+        // parent of p takes custody of p's child
+        if (p->pr->lc == p)
             p->pr->lc = p->lc;
-        } else {
-            tmp = p->pr->rc;
+        else
             p->pr->rc = p->lc;
-        }
+        // disconn. to-be-del node
         tmp->lc = NULL;
         __avl_balance(head, tmp->pr);
         tmp->pr = NULL;
         return tmp;
     } else {
+        // if p has no parent i.e. root and p has no inord. successor
         avlnode_t *tmp = p;
+        // lc of p promoted to root
         head->root = p->lc;
+        // disconn. to-be-del node
         tmp->lc = NULL;
         return tmp;
     }
