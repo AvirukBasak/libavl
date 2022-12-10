@@ -77,7 +77,11 @@ avlnode_t *avl_detach(AVL *head, ptr_t key, avl_keycompare_t callback)
         avlnode_t *tmp = p->rc;
         while (tmp->lc)
             tmp = tmp->lc;
+        // swap data b/w inord. successor and to-be-del node
+        void *tmpdata = p->data;
         p->data = tmp->data;
+        tmp->data = tmpdata;
+        // other pointer manup.
         if (tmp->pr == p) p->rc = tmp->rc;
         else tmp->pr->lc = tmp->rc;
         tmp->lc = tmp->rc = NULL;
