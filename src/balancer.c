@@ -46,12 +46,14 @@ void __avl_ll_rot(AVL *head, avlnode_t *node)
     avlnode_t *parent = node->pr;
     avlnode_t *nroot = node->lc;
     avlnode_t *tmp = nroot->rc;
-    parent->lc == node ? (parent->lc = nroot) : (parent->rc = nroot);
-    nroot->pr = parent;
+    if (parent)
+        parent->lc == node ? (parent->lc = nroot) : (parent->rc = nroot);
+    else head->root = nroot;
+    if (nroot) nroot->pr = parent;
     nroot->rc = node;
-    node->pr = nroot;
+    if (node) node->pr = nroot;
     node->lc = tmp;
-    tmp->pr = node;
+    if (tmp) tmp->pr = node;
 }
 
 void __avl_lr_rot(AVL *head, avlnode_t *node)
@@ -60,10 +62,10 @@ void __avl_lr_rot(AVL *head, avlnode_t *node)
     avlnode_t *tmp_lc = node->lc;
     avlnode_t *tmp_lrc_lc = node->lc->rc->lc;
     node->lc = node->lc->rc;
-    node->lc->rc->pr = node;
+    if (node->lc->rc) node->lc->rc->pr = node;
     node->lc->lc = tmp_lc;
     tmp_lc->rc = tmp_lrc_lc;
-    tmp_lc->pr = node->lc;
+    if (tmp_lc) tmp_lc->pr = node->lc;
     __avl_ll_rot(head, node);
 }
 
@@ -73,12 +75,14 @@ void __avl_rr_rot(AVL *head, avlnode_t *node)
     avlnode_t *parent = node->pr;
     avlnode_t *nroot = node->rc;
     avlnode_t *tmp = nroot->lc;
-    parent->lc == node ? (parent->lc = nroot) : (parent->rc = nroot);
-    nroot->pr = parent;
+    if (parent)
+        parent->lc == node ? (parent->lc = nroot) : (parent->rc = nroot);
+    else head->root = nroot;
+    if (nroot) nroot->pr = parent;
     nroot->lc = node;
-    node->pr = nroot;
+    if (node) node->pr = nroot;
     node->rc = tmp;
-    tmp->pr = node;
+    if (tmp) tmp->pr = node;
 }
 
 void __avl_rl_rot(AVL *head, avlnode_t *node)
@@ -87,9 +91,9 @@ void __avl_rl_rot(AVL *head, avlnode_t *node)
     avlnode_t *tmp_rc = node->rc;
     avlnode_t *tmp_rlc_rc = node->rc->lc->rc;
     node->rc = node->rc->lc;
-    node->rc->lc->pr = node;
+    if (node->rc->lc) node->rc->lc->pr = node;
     node->rc->rc = tmp_rc;
     tmp_rc->lc = tmp_rlc_rc;
-    tmp_rc->pr = node->rc;
+    if (tmp_rc) tmp_rc->pr = node->rc;
     __avl_rr_rot(head, node);
 }

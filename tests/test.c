@@ -1,57 +1,103 @@
+/**
+ * Implementation of an ordered map using a self balancing BST.
+ * Implemented using libavl.
+ * @author Aviruk Basak
+ * @date 10.12.2022
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "libavl.h"
 
-typedef struct {
-    int id;
-    const char *name;
-} datanode;
+typedef AVL map_t;
 
-int num_comp(void *d1, void *d2) {
-    return ((datanode*) d1)->id - ((datanode*) d2)->id;
-}
-
-int num_kcomp(void *key, void *d) {
-    /* if key < data, -ve or decrease data, i.e. go to left subtree
-     * if key > data, +ve or increase data, i.e. go to right subtree
-     * if equal 0, match found
-     */
-    return *(int*)key - ((datanode*) d)->id;
-}
+// map implementation using libavl
+map_t *map_new();
+void map_delete(map_t **mp);
+bool map_insert(map_t *mp, int id, char *name);
+char *map_search(map_t *mp, int id);
+char *map_remove(map_t *mp, int id);
 
 int main()
 {
-    // allocate tree head
-    AVL *avlh = malloc(sizeof(AVL));
-    // create new data (stack allocated in this case)
-    datanode data1 = { 12, "John" };
-    datanode data2 = { 23, "Joe" };
-    {
-        // allocate nodes in heap
-        avlnode_t *node1 = malloc(sizeof(avlnode_t));
-        avlnode_t *node2 = malloc(sizeof(avlnode_t));
-        // initialize nodes
-        node1->data = &data1;
-        node2->data = &data2;
-        // attatch nodes to tree
-        avl_attach(avlh, node1, num_comp);
-        avl_attach(avlh, node2, num_comp);
-    }
-    // use tree; get name whose id = 12
-    int searchId = 12;
-    const char* name12 = ((datanode*) avl_search(avlh, &searchId, num_kcomp))->name;
-    // delete id 23
-    int delId = 23;
-    avlnode_t *node23 = avl_detach(avlh, &delId, num_kcomp);
-    const char* name23 = ((datanode*) node23->data)->name;
-    // resuls
+    map_t *mp = map_new();
+    map_insert(mp, 45, "Jonathan");
+    map_insert(mp, 23, "Joe");
+    map_insert(mp, 37, "James");
+    map_insert(mp, 12, "John");
+    map_insert(mp, 38, "Johnny");
+    const char *name12 = map_search(mp, 12);
+    const char *name23 = map_search(mp, 23);
     printf("%d => %s\n"
-           "%d => %s\n", searchId, name12, delId, name23);
-    /* free node and data
-     * in this case data is not heap allocated so data not freed
+           "%d => %s\n", 12, name12, 23, name23);
+    map_delete(&mp);
+}
+
+// data struct
+typedef struct {
+    int id;
+    char *name;
+} mapdata_t;
+
+// helper functions
+void __map_dfs(avlnode_t *node, void (*cllbck)(void*));
+int __map_ncomp(void *d1, void *d2);
+int __map_nkcomp(void *id, void *d);
+
+map_t *map_new() {
+    return malloc(sizeof(AVL));
+}
+
+// function definitions
+void map_delete(map_t **mp) {
+    if (!mp || !*mp) return;
+    __map_dfs((*mp)->__root, free);
+    free(*mp);
+    *mp = NULL;
+}
+
+bool map_insert(map_t *mp, int id, char *name) {
+    mapdata_t *data = malloc(sizeof(mapdata_t));
+    avlnode_t *node = malloc(sizeof(avlnode_t));
+    node->data = data;
+    data->id = id;
+    data->name = name;
+    return avl_attach(mp, node, __map_ncomp);
+}
+
+char *map_search(map_t *mp, int id) {
+    return ((mapdata_t*) avl_search(mp, &id, __map_nkcomp))->name;
+}
+
+char *map_remove(map_t *mp, int id) {
+    avlnode_t *node = avl_detach(mp, &id, __map_nkcomp);
+    mapdata_t *data = ((mapdata_t*) node->data);
+    char *name = data->name;
+    free(node);
+    free(data);
+    return name;
+}
+
+// helper function definitions
+void __map_dfs(avlnode_t *node, void (*cllbck)(void*)) {
+    if (!node) return;
+    else {
+        __map_dfs(node->__lc, cllbck);
+        cllbck(node->data);
+        cllbck(node);
+        __map_dfs(node->__rc, cllbck);
+    }
+}
+
+int __map_ncomp(void *d1, void *d2) {
+    return ((mapdata_t*) d1)->id - ((mapdata_t*) d2)->id;
+}
+
+int __map_nkcomp(void *id, void *d) {
+    /* if id < data, -ve or decrease data, i.e. go to left subtree
+     * if id > data, +ve or increase data, i.e. go to right subtree
+     * if equal 0, match found
      */
-    free(node23);
-    // free nodes and tree
-    free(avlh);
+    return *(int*)id - ((mapdata_t*) d)->id;
 }
