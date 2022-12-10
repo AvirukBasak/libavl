@@ -18,20 +18,20 @@ struct avlnode_t {
     int        bf;    // node balance factor
 };
 
-typedef int (*avl_compare_t)    (void*, void*);
-typedef int (*avl_keycompare_t) (void*, void*);
+typedef int (*avl_compare_t)    (ptr_t, ptr_t);
+typedef int (*avl_keycompare_t) (ptr_t, ptr_t);
 
 // helper functions
-void __avl_calcbf  (avlnode_t *node);
-int __avl_height   (avlnode_t *node);
-void __avl_balance (AVL *head, avlnode_t *node);
-void __avl_ll_rot  (AVL *head, avlnode_t *node);
-void __avl_lr_rot  (AVL *head, avlnode_t *node);
-void __avl_rr_rot  (AVL *head, avlnode_t *node);
-void __avl_rl_rot  (AVL *head, avlnode_t *node);
+void __avl_calcbf     (avlnode_t *node);
+int __avl_height      (avlnode_t *node);
+void __avl_balance    (AVL *head, avlnode_t *node);
+void __avl_ll_rot     (AVL *head, avlnode_t *node);
+void __avl_lr_rot     (AVL *head, avlnode_t *node);
+void __avl_rr_rot     (AVL *head, avlnode_t *node);
+void __avl_rl_rot     (AVL *head, avlnode_t *node);
 
 bool avl_attach       (AVL *head, avlnode_t *node, avl_compare_t callback);
-avlnode_t *avl_detach (AVL *head, void *key, avl_keycompare_t callback);
-ptr_t avl_search      (AVL *head, void *key, avl_keycompare_t callback);
+avlnode_t *avl_detach (AVL *head, ptr_t key, avl_keycompare_t callback);
+ptr_t avl_search      (AVL *head, ptr_t key, avl_keycompare_t callback);
 
 #endif
