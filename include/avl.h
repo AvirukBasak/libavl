@@ -34,4 +34,6 @@ bool avl_attach       (AVL *head, avlnode_t *node, avl_compare_t callback);
 avlnode_t *avl_detach (AVL *head, ptr_t key, avl_keycompare_t callback);
 ptr_t avl_search      (AVL *head, ptr_t key, avl_keycompare_t callback);
 
+void avl_traverse     (AVL *head, void (*callback)(avlnode_t*));
+
 #endif

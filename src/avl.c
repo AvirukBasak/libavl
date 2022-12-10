@@ -1,4 +1,5 @@
 #include "stdhead.h"
+#include "helperfn.h"
 #include "avl.h"
 
 /**
@@ -138,4 +139,12 @@ ptr_t avl_search(AVL *head, ptr_t key, avl_keycompare_t callback)
         else if (callback(key, p->data) > 0) p = p->rc;
         else return p->data;
     return NULL;
+}
+
+void avl_traverse(AVL *head, void (*callback)(avlnode_t*))
+{
+    if (!head) return;
+    else if (!head->root) return;
+    if (!callback) abort();
+    __avl_traverse(head->root, callback);
 }

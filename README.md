@@ -29,6 +29,7 @@ Functions:
 - [`avl_attach`](#avl_attach)
 - [`avl_detach`](#avl_detach)
 - [`avl_search`](#avl_search)
+- [`avl_traverse`](#acl_traverse)
 
 Callback function types:
 - [`avl_compare_t`](#avl_compare_t)
@@ -93,6 +94,16 @@ Searches for a key among the tree nodes.
 - return: `void*` Pointer to data containing `key`
 
 Calls [`avl_keycompare_t`](#avl_keycompare_t) type callback function to compare `key` to data b/w two nodes.
+
+#### avl_traverse
+```c
+void avl_traverse(AVL *head, void (*callback)(avlnode_t*));
+```
+
+Runs a callback function on each AVL tree node in order.
+
+- param: `head` AVL head
+- param: `callback` Function w/ prototype `void (*)(avlnode_t*)`
 
 #### avl_compare_t
 ```c

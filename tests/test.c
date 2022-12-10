@@ -41,7 +41,7 @@ typedef struct {
 } mapdata_t;
 
 // helper functions
-void __map_dfs(avlnode_t *node, void (*cllbck)(void*));
+void __map_free(avlnode_t *node);
 int __map_ncomp(void *d1, void *d2);
 int __map_nkcomp(void *id, void *d);
 
@@ -52,7 +52,7 @@ map_t *map_new() {
 // function definitions
 void map_delete(map_t **mp) {
     if (!mp || !*mp) return;
-    __map_dfs((*mp)->__root, free);
+    avl_traverse(*mp, __map_free);
     free(*mp);
     *mp = NULL;
 }
@@ -81,12 +81,9 @@ char *map_remove(map_t *mp, int id) {
 }
 
 // helper function definitions
-void __map_dfs(avlnode_t *node, void (*cllbck)(void*)) {
-    if (!node) return;
-    __map_dfs(node->__lc, cllbck);
-    cllbck(node->data);
-    cllbck(node);
-    __map_dfs(node->__rc, cllbck);
+void __map_free(avlnode_t *node) {
+    free(node->data);
+    free(node);
 }
 
 int __map_ncomp(void *d1, void *d2) {

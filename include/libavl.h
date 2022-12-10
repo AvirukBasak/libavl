@@ -113,4 +113,11 @@ avlnode_t *avl_detach(AVL *head, void *key, avl_keycompare_t callback);
  */
 void *avl_search(AVL *head, void *key, avl_keycompare_t callback);
 
+/**
+ * @brief Runs a callback function on each AVL tree node in order
+ * @@param head AVL head
+ * @param callback void (*)(avlnode_t*)
+ */
+void avl_traverse(AVL *head, void (*callback)(avlnode_t*));
+
 #endif
