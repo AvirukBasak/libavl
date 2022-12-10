@@ -15,6 +15,7 @@ typedef AVL map_t;
 // map implementation using libavl
 map_t *map_new();
 void map_delete(map_t **mp);
+void map_print(map_t *mp);
 bool map_insert(map_t *mp, int id, char *name);
 char *map_search(map_t *mp, int id);
 char *map_remove(map_t *mp, int id);
@@ -31,6 +32,8 @@ int main()
     const char *name23 = map_search(mp, 23);
     printf("%d => %s\n"
            "%d => %s\n", 12, name12, 23, name23);
+    printf("avl_map = ");
+    map_print(mp);
     map_delete(&mp);
 }
 
@@ -41,6 +44,7 @@ typedef struct {
 } mapdata_t;
 
 // helper functions
+void __map_print(avlnode_t *node);
 void __map_free(avlnode_t *node);
 int __map_ncomp(void *d1, void *d2);
 int __map_nkcomp(void *id, void *d);
@@ -55,6 +59,13 @@ void map_delete(map_t **mp) {
     avl_traverse(*mp, __map_free);
     free(*mp);
     *mp = NULL;
+}
+
+void map_print(map_t *mp) {
+    if (!mp) return;
+    printf("{\n");
+    avl_traverse(mp, __map_print);
+    printf("}\n");
 }
 
 bool map_insert(map_t *mp, int id, char *name) {
@@ -84,6 +95,12 @@ char *map_remove(map_t *mp, int id) {
 void __map_free(avlnode_t *node) {
     free(node->data);
     free(node);
+}
+
+void __map_print(avlnode_t *node) {
+    mapdata_t *data = node->data;
+    if (!data) return;
+    printf("    %d => \"%s\"\n", data->id, data->name);
 }
 
 int __map_ncomp(void *d1, void *d2) {
