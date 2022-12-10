@@ -82,12 +82,10 @@ char *map_remove(map_t *mp, int id) {
 // helper function definitions
 void __map_dfs(avlnode_t *node, void (*cllbck)(void*)) {
     if (!node) return;
-    else {
-        __map_dfs(node->__lc, cllbck);
-        cllbck(node->data);
-        cllbck(node);
-        __map_dfs(node->__rc, cllbck);
-    }
+    __map_dfs(node->__lc, cllbck);
+    cllbck(node->data);
+    cllbck(node);
+    __map_dfs(node->__rc, cllbck);
 }
 
 int __map_ncomp(void *d1, void *d2) {

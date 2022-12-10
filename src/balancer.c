@@ -33,10 +33,10 @@ void __avl_balance(AVL *head, avlnode_t *node)
     else if (node->bf > 1 && node->lc->bf < 0)
         __avl_lr_rot(head, node);
     // right right case
-    else if (node->bf < -1 && node->rc <= 0)
+    else if (node->bf < -1 && node->rc->bf <= 0)
         __avl_rr_rot(head, node);
     // right left case
-    else if (node->bf < -1 && node->rc > 0)
+    else if (node->bf < -1 && node->rc->bf > 0)
         __avl_rl_rot(head, node);
 }
 
@@ -49,7 +49,7 @@ void __avl_ll_rot(AVL *head, avlnode_t *node)
     if (parent)
         parent->lc == node ? (parent->lc = nroot) : (parent->rc = nroot);
     else head->root = nroot;
-    if (nroot) nroot->pr = parent;
+    nroot->pr = parent;
     nroot->rc = node;
     if (node) node->pr = nroot;
     node->lc = tmp;
@@ -58,15 +58,37 @@ void __avl_ll_rot(AVL *head, avlnode_t *node)
 
 void __avl_lr_rot(AVL *head, avlnode_t *node)
 {
+   /*
+    *        parent                       parent
+    *          |                            |
+    *          n0                        __ n2 __
+    *         /  \                     /          \
+    *       n1    n0rc      =>       n1            n0
+    *      /  \                     /  \          /  \
+    *  n1lc    n2               n1lc    n2lc  n2rc    n0rc
+    *         /  \
+    *     n2lc    n2rc
+    */
     if (!node) return;
-    avlnode_t *tmp_lc = node->lc;
-    avlnode_t *tmp_lrc_lc = node->lc->rc->lc;
-    node->lc = node->lc->rc;
-    if (node->lc->rc) node->lc->rc->pr = node;
-    node->lc->lc = tmp_lc;
-    tmp_lc->rc = tmp_lrc_lc;
-    if (tmp_lc) tmp_lc->pr = node->lc;
-    __avl_ll_rot(head, node);
+    avlnode_t *parent = node->pr;
+    avlnode_t *n0 = node;
+    avlnode_t *n1 = n0->lc;
+    avlnode_t *n2 = n1->rc;
+    // n2 becomes new root of the subtree
+    if (parent)
+        parent->lc == n0 ? (parent->lc = n2) : (parent->rc = n2);
+    else head->root = n2;
+    n2->pr = parent;
+    // n1 and n0 take custody of n2's present children
+    n1->rc = n2->lc;
+    if (n2->lc) n2->lc->pr = n1;
+    n0->lc = n2->rc;
+    if (n2->rc) n2->rc->pr = n0;
+    // new children of n2: n1 and n0
+    n2->lc = n1;
+    n1->pr = n2;
+    n2->rc = n0;
+    n0->pr = n2;
 }
 
 void __avl_rr_rot(AVL *head, avlnode_t *node)
@@ -78,7 +100,7 @@ void __avl_rr_rot(AVL *head, avlnode_t *node)
     if (parent)
         parent->lc == node ? (parent->lc = nroot) : (parent->rc = nroot);
     else head->root = nroot;
-    if (nroot) nroot->pr = parent;
+    nroot->pr = parent;
     nroot->lc = node;
     if (node) node->pr = nroot;
     node->rc = tmp;
@@ -87,13 +109,35 @@ void __avl_rr_rot(AVL *head, avlnode_t *node)
 
 void __avl_rl_rot(AVL *head, avlnode_t *node)
 {
+    /*
+    *        parent                       parent
+    *          |                            |
+    *          n0                        __ n2 __
+    *         /  \                     /          \
+    *     n0lc    n1        =>       n0            n1
+    *            /  \               /  \          /  \
+    *          n2    n1rc       n0lc    n2lc  n2rc    n1rc
+    *         /  \
+    *     n2lc    n2rc
+    */
     if (!node) return;
-    avlnode_t *tmp_rc = node->rc;
-    avlnode_t *tmp_rlc_rc = node->rc->lc->rc;
-    node->rc = node->rc->lc;
-    if (node->rc->lc) node->rc->lc->pr = node;
-    node->rc->rc = tmp_rc;
-    tmp_rc->lc = tmp_rlc_rc;
-    if (tmp_rc) tmp_rc->pr = node->rc;
-    __avl_rr_rot(head, node);
+    avlnode_t *parent = node->pr;
+    avlnode_t *n0 = node;
+    avlnode_t *n1 = n0->rc;
+    avlnode_t *n2 = n1->lc;
+    // n2 becomes new root of the subtree
+    if (parent)
+        parent->lc == n0 ? (parent->lc = n2) : (parent->rc = n2);
+    else head->root = n2;
+    n2->pr = parent;
+    // n0 and n1 take custody of n2's present children
+    n0->rc = n2->lc;
+    if (n2->lc) n2->lc->pr = n0;
+    n1->lc = n2->rc;
+    if (n2->rc) n2->rc->pr = n1;
+    // new children of n2: n0 and n1
+    n2->lc = n0;
+    n0->pr = n2;
+    n2->rc = n1;
+    n1->pr = n2;
 }
