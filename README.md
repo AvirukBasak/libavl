@@ -105,7 +105,7 @@ void avl_traverse(AVL *head, void (*callback)(avlnode_t*));
 Runs a callback function on each AVL tree node in order.
 
 - param: `head` AVL head
-- param: `callback` Function w/ prototype `void (*)(avlnode_t*)`
+- param: `callback` Function w/ prototype `void (avlnode_t*)`
 
 #### avl_compare_t
 ```c
