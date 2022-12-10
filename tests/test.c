@@ -79,13 +79,13 @@ bool map_insert(map_t *mp, int id, char *name) {
 
 char *map_search(map_t *mp, int id) {
     mapdata_t *data = (mapdata_t*) avl_search(mp, &id, __map_nkcomp);
-    return data ? data->name : NULL;
+    return data ? data->name : "NULL";
 }
 
 char *map_remove(map_t *mp, int id) {
     avlnode_t *node = avl_detach(mp, &id, __map_nkcomp);
     mapdata_t *data = node ? ((mapdata_t*) node->data) : NULL;
-    char *name = data ? data->name : NULL;
+    char *name = data ? data->name : "NULL";
     free(node);
     free(data);
     return name;
