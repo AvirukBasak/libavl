@@ -23,10 +23,10 @@ int main()
 {
     map_t *mp = map_new();
     map_insert(mp, 45, "Jonathan");
-    map_insert(mp, 37, "Joe");
-    map_insert(mp, 23, "James");
+    map_insert(mp, 23, "Joe");
+    map_insert(mp, 37, "James");
     map_insert(mp, 12, "John");
-    map_insert(mp, 10, "Johnny");
+    map_insert(mp, 38, "Johnny");
     const char *name12 = map_search(mp, 12);
     const char *name23 = map_search(mp, 23);
     printf("%d => %s\n"
