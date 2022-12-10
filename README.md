@@ -22,6 +22,9 @@ See the [example](tests/test.c) which implements an ordered map using `libavl`.
 - Copy library from `target/`.
 - See the [api](#api) and [example](tests/test.c).
 
+#### Note
+- Library uses `avl` or `avl_` prefix.
+
 ## API
 Library defined types:
 - [`AVL`](#avl-type)
