@@ -3,21 +3,21 @@
 
 #include "libavl.h"
 
-struct avldata_t {
+typedef struct {
     int id;
     const char *name;
-};
+} datanode;
 
-int num_comp(avldata_t *d1, avldata_t *d2) {
-    return d1->id - d2->id;
+int num_comp(void *d1, void *d2) {
+    return ((datanode*) d1)->id - ((datanode*) d2)->id;
 }
 
-int num_kcomp(void *key, avldata_t *d) {
+int num_kcomp(void *key, void *d) {
     /* if key < data, -ve or decrease data, i.e. go to left subtree
      * if key > data, +ve or increase data, i.e. go to right subtree
      * if equal 0, match found
      */
-    return *(int*)key - d->id;
+    return *(int*)key - ((datanode*) d)->id;
 }
 
 int main()
@@ -25,8 +25,8 @@ int main()
     // allocate tree head
     AVL *avlh = malloc(sizeof(AVL));
     // create new data (stack allocated in this case)
-    avldata_t data1 = { 12, "John" };
-    avldata_t data2 = { 23, "Joe" };
+    datanode data1 = { 12, "John" };
+    datanode data2 = { 23, "Joe" };
     {
         // allocate nodes in heap
         avlnode_t *node1 = malloc(sizeof(avlnode_t));
@@ -40,11 +40,11 @@ int main()
     }
     // use tree; get name whose id = 12
     int searchId = 12;
-    const char* name12 = avl_search(avlh, &searchId, num_kcomp)->name;
+    const char* name12 = ((datanode*) avl_search(avlh, &searchId, num_kcomp))->name;
     // delete id 23
     int delId = 23;
     avlnode_t *node23 = avl_detach(avlh, &delId, num_kcomp);
-    const char* name23 = node23->data->name;
+    const char* name23 = ((datanode*) node23->data)->name;
     // resuls
     printf("%d => %s\n"
            "%d => %s\n", searchId, name12, delId, name23);

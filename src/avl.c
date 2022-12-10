@@ -5,7 +5,7 @@
  * @brief Attaches a node to the tree
  * @param head AVL head
  * @param node Node to be attached
- * @param callback int (*)(avldata_t*, avldata_t*)
+ * @param callback int (*)(ptr_t, ptr_t)
  * @return bool true on attach success
  */
 bool avl_attach(AVL *head, avlnode_t *node, avl_compare_t callback)
@@ -49,7 +49,7 @@ avl_attach_node_init:
  * @brief Detaches a node from the tree
  * @param head AVL head
  * @param key Pointer to key which is present in the data member of a node
- * @param callback int (*)(void*, avldata_t*)
+ * @param callback int (*)(void*, ptr_t)
  * @return avlnode_t* Pointer to node to be freed
  */
 avlnode_t *avl_detach(AVL *head, void *key, avl_keycompare_t callback)
@@ -110,10 +110,10 @@ avlnode_t *avl_detach(AVL *head, void *key, avl_keycompare_t callback)
  * @brief Searches for a key among the tree nodes
  * @param head AVL head
  * @param key Pointer to key which is to be searched
- * @param callback int (*)(void*, avldata_t*)
- * @return avldata_t* Pointer to data containing key
+ * @param callback int (*)(void*, ptr_t)
+ * @return ptr_t Pointer to data containing key
  */
-avldata_t *avl_search(AVL *head, void *key, avl_keycompare_t callback)
+ptr_t avl_search(AVL *head, void *key, avl_keycompare_t callback)
 {
     if (!callback) abort();
     if (!head || !head->root || !key) return NULL;
