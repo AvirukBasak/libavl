@@ -18,18 +18,9 @@ You'll most likely need a few wrapper libraries around `libavl` to get the funct
 See the [example](tests/test.c) which implements an ordered map using `libavl`.
 
 ## Usage
-You'll need CMake `3.10` or above to compile this.
-
-```
-mkdir build
-cd build
-cmake ..
-make
-```
-
-Once done you'll find the output library and header files in `build/target/` from the project root.
-
-In addition, you'll also find a `run_test` program in `build/`.
+- Build with `make`.
+- Copy library from `target/`.
+- See the [api](#api) and [example](tests/test.c).
 
 #### Note
 - Library uses `avl` or `avl_` prefix.
