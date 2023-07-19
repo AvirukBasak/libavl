@@ -31,9 +31,6 @@ Once done you'll find the output library and header files in `build/target/` fro
 
 In addition, you'll also find a `run_test` program in `build/`.
 
-#### Note
-- Library uses `avl` or `avl_` prefix.
-
 ## API
 Library defined types:
 - [`AVL`](#avl-type)
