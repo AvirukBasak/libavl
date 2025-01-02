@@ -15,7 +15,7 @@ INCLUDE_DIR := ../../include
 
 LIB_NAME    := libdummy
 
-CC          := gcc
+CC          ?= clang
 CFLAGS      := -Wall -Ofast
 CDBGFLAGS   := -Wall -g -D DEBUG
 DBG         := gdb -q
