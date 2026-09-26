@@ -16,7 +16,7 @@ INCLUDE_DIR := ../include
 LIB_NAME    := mylib
 
 CC          ?= clang
-CFLAGS      := -Wall -Ofast
+CFLAGS      := -Wall -O3
 CDBGFLAGS   := -Wall -g -D DEBUG
 DBG         := gdb -q
 
